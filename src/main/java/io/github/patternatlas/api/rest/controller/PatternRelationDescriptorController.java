@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import io.github.patternatlas.api.service.PatternRelationDescriptorService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -49,10 +50,14 @@ public class PatternRelationDescriptorController {
     private final PatternLanguageService patternLanguageService;
     private final PatternViewService patternViewService;
 
+    private final PatternRelationDescriptorService patternRelationDescriptorService;
+
     public PatternRelationDescriptorController(PatternLanguageService patternLanguageService,
-                                               PatternViewService patternViewService) {
+                                               PatternViewService patternViewService,
+                                               PatternRelationDescriptorService patternRelationDescriptorService) {
         this.patternLanguageService = patternLanguageService;
         this.patternViewService = patternViewService;
+        this.patternRelationDescriptorService = patternRelationDescriptorService;
     }
 
     // Links and Affordances
@@ -340,6 +345,29 @@ public class PatternRelationDescriptorController {
 
         return new CollectionModel<>(directedEdgeResources, getDirectedEdgeCollectionResourceLinksForViewRoute(patternViewId));
     }
+
+    @Operation(operationId = "getDirectedEdgeByInvolvedPatternId", responses = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404", content = @Content)}, description = "Retrieve directed edge of pattern by id")
+    @GetMapping(value = "/directedEdges/{patternId}")
+    public CollectionModel<EntityModel<DirectedEdgeModel>> getDirectedEdgeByInvolvedPatternId(@PathVariable UUID patternId) {
+        List<EntityModel<DirectedEdgeModel>> directedEdges = this.patternRelationDescriptorService.getDirectedEdgeByInvolvedPatternId(patternId)
+                .parallelStream()
+                .map(DirectedEdgeModel::from)
+                .map(directedEdgeModel -> new EntityModel<>(directedEdgeModel))
+                .collect(Collectors.toList());
+        return new CollectionModel<>(directedEdges);
+    }
+
+    @Operation(operationId = "getUndirectedEdgeByInvolvedPatternId", responses = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404", content = @Content)}, description = "Retrieve directed edge of pattern by id")
+    @GetMapping(value = "/undirectedEdges/{patternId}")
+    public CollectionModel<EntityModel<UndirectedEdgeModel>> getUndirectedEdgeByInvolvedPatternId(@PathVariable UUID patternId) {
+        List<EntityModel<UndirectedEdgeModel>> undirectedEdges = this.patternRelationDescriptorService.getUndirectedEdgeByInvolvedPatternId(patternId)
+                .parallelStream()
+                .map(UndirectedEdgeModel::from)
+                .map(undirectedEdgeModel -> new EntityModel<>(undirectedEdgeModel))
+                .collect(Collectors.toList());
+        return new CollectionModel<>(undirectedEdges);
+    }
+
 
     @Operation(operationId = "getDirectedEdgeOfPatternViewById", responses = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404", content = @Content)}, description = "Retrieve directed edge of pattern view by id")
     @GetMapping(value = "/patternViews/{patternViewId}/directedEdges/{directedEdgeId}")

@@ -30,11 +30,15 @@ public class UndirectedEdgeModel {
 
     private String pattern1Uri;
 
+    private UUID pattern1PatternLanguageId;
+
     private String pattern2Name;
 
     private UUID pattern2Id;
 
     private String pattern2Uri;
+
+    private UUID pattern2PatternLanguageId;
 
     @JsonIgnore
     private UndirectedEdge undirectedEdge;
@@ -46,9 +50,11 @@ public class UndirectedEdgeModel {
         this.pattern1Name = undirectedEdge.getP1().getName();
         this.pattern1Id = undirectedEdge.getP1().getId();
         this.pattern1Uri = undirectedEdge.getP1().getUri();
+        this.pattern1PatternLanguageId = undirectedEdge.getP1().getPatternLanguage().getId();
         this.pattern2Name = undirectedEdge.getP2().getName();
         this.pattern2Id = undirectedEdge.getP2().getId();
         this.pattern2Uri = undirectedEdge.getP2().getUri();
+        this.pattern2PatternLanguageId = undirectedEdge.getP2().getPatternLanguage().getId();
         this.undirectedEdge = undirectedEdge;
     }
 

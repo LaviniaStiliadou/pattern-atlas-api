@@ -1,10 +1,8 @@
 package io.github.patternatlas.api.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import io.github.patternatlas.api.repositories.PatternRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +15,20 @@ import io.github.patternatlas.api.repositories.DirectedEdgeRepository;
 import io.github.patternatlas.api.repositories.UndirectedEdgeReository;
 
 @Service
-public class PatternRelationDescriptorServiceImpl implements PatternRelationDescriptorService {
+public class  PatternRelationDescriptorServiceImpl implements PatternRelationDescriptorService {
 
     private final DirectedEdgeRepository directedEdgeRepository;
 
     private final UndirectedEdgeReository undirectedEdgeReository;
 
+    private final PatternRepository patternRepository;
+
     public PatternRelationDescriptorServiceImpl(DirectedEdgeRepository directedEdgeRepository,
-                                                UndirectedEdgeReository undirectedEdgeReository) {
+                                                UndirectedEdgeReository undirectedEdgeReository,
+                                                PatternRepository patternRepository) {
         this.directedEdgeRepository = directedEdgeRepository;
         this.undirectedEdgeReository = undirectedEdgeReository;
+        this.patternRepository = patternRepository;
     }
 
     @Override
@@ -52,6 +54,42 @@ public class PatternRelationDescriptorServiceImpl implements PatternRelationDesc
     public List<DirectedEdge> findDirectedEdgeByTarget(Pattern pattern) throws DirectedEdgeNotFoundException {
         return this.directedEdgeRepository.findByTarget(pattern)
                 .orElseThrow(() -> new DirectedEdgeNotFoundException(String.format("No DirectedEdge found with Pattern %s as target", pattern.getId())));
+    }
+
+    @Override
+    public List<UndirectedEdge> getUndirectedEdgeByInvolvedPatternId(UUID id) throws DirectedEdgeNotFoundException {
+        Pattern searchedPattern = patternRepository.findById(id)
+                .orElseThrow(() -> new UndirectedEdgeNotFoundException(String.format("No UndirectedEdge found with Pattern %s", id)));
+
+        return findUndirectedEdgeByPattern(searchedPattern);
+    }
+
+    @Override
+    public List<DirectedEdge> getDirectedEdgeByInvolvedPatternId(UUID id) throws UndirectedEdgeNotFoundException {
+        Pattern searchedPattern = patternRepository.findById(id)
+                .orElseThrow(() -> new DirectedEdgeNotFoundException(String.format("No DirectedEdge found with Pattern %s", id)));
+
+        List<DirectedEdge> sourceEdges;
+        try {
+            sourceEdges = findDirectedEdgeBySource(searchedPattern);
+        } catch (DirectedEdgeNotFoundException ex) {
+            sourceEdges = Collections.emptyList();
+        }
+
+        List<DirectedEdge> targetEdges;
+        try {
+            targetEdges = findDirectedEdgeByTarget(searchedPattern);
+        } catch (DirectedEdgeNotFoundException ex) {
+            targetEdges = Collections.emptyList();
+        }
+
+        sourceEdges.addAll(targetEdges);
+
+        if (sourceEdges.size() > 0) {
+            return sourceEdges;
+        } else {
+            throw new DirectedEdgeNotFoundException(String.format("No DirectedEdge found with Pattern %s", id));
+        }
     }
 
     @Override

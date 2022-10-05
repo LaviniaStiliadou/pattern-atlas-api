@@ -30,11 +30,15 @@ public class DirectedEdgeModel {
 
     private String sourcePatternUri;
 
+    private UUID sourcePatternLanguageId;
+
     private String targetPatternName;
 
     private UUID targetPatternId;
 
     private String targetPatternUri;
+
+    private UUID targetPatternLanguageId;
 
     @JsonIgnore
     private DirectedEdge directedEdge;
@@ -46,9 +50,11 @@ public class DirectedEdgeModel {
         this.sourcePatternId = directedEdge.getSource().getId();
         this.sourcePatternName = directedEdge.getSource().getName();
         this.sourcePatternUri = directedEdge.getSource().getUri();
+        this.sourcePatternLanguageId = directedEdge.getSource().getPatternLanguage().getId();
         this.targetPatternId = directedEdge.getTarget().getId();
         this.targetPatternName = directedEdge.getTarget().getName();
         this.targetPatternUri = directedEdge.getTarget().getUri();
+        this.targetPatternLanguageId = directedEdge.getTarget().getPatternLanguage().getId();
         this.directedEdge = directedEdge;
     }
 

@@ -21,6 +21,10 @@ public interface PatternRelationDescriptorService {
 
     List<DirectedEdge> findDirectedEdgeByTarget(Pattern pattern);
 
+    List<DirectedEdge> getDirectedEdgeByInvolvedPatternId(UUID id);
+
+    List<UndirectedEdge> getUndirectedEdgeByInvolvedPatternId(UUID id);
+
     @Transactional
     DirectedEdge updateDirectedEdge(DirectedEdge directedEdge);
 
