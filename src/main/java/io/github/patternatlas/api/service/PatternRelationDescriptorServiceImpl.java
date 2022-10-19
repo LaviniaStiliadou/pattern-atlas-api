@@ -57,6 +57,7 @@ public class  PatternRelationDescriptorServiceImpl implements PatternRelationDes
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UndirectedEdge> getUndirectedEdgeByInvolvedPatternId(UUID id) throws DirectedEdgeNotFoundException {
         Pattern searchedPattern = patternRepository.findById(id)
                 .orElseThrow(() -> new UndirectedEdgeNotFoundException(String.format("No UndirectedEdge found with Pattern %s", id)));
@@ -65,6 +66,7 @@ public class  PatternRelationDescriptorServiceImpl implements PatternRelationDes
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DirectedEdge> getDirectedEdgeByInvolvedPatternId(UUID id) throws UndirectedEdgeNotFoundException {
         Pattern searchedPattern = patternRepository.findById(id)
                 .orElseThrow(() -> new DirectedEdgeNotFoundException(String.format("No DirectedEdge found with Pattern %s", id)));

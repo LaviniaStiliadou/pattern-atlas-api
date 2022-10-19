@@ -357,7 +357,7 @@ public class PatternRelationDescriptorController {
         return new CollectionModel<>(directedEdges);
     }
 
-    @Operation(operationId = "getUndirectedEdgeByInvolvedPatternId", responses = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404", content = @Content)}, description = "Retrieve directed edge of pattern by id")
+    @Operation(operationId = "getUndirectedEdgeByInvolvedPatternId", responses = {@ApiResponse(responseCode = "200"), @ApiResponse(responseCode = "404", content = @Content)}, description = "Retrieve undirected edge of pattern by id")
     @GetMapping(value = "/undirectedEdges/{patternId}")
     public CollectionModel<EntityModel<UndirectedEdgeModel>> getUndirectedEdgeByInvolvedPatternId(@PathVariable UUID patternId) {
         List<EntityModel<UndirectedEdgeModel>> undirectedEdges = this.patternRelationDescriptorService.getUndirectedEdgeByInvolvedPatternId(patternId)

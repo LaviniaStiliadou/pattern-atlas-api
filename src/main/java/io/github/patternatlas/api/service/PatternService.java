@@ -4,6 +4,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import io.github.patternatlas.api.entities.Pattern;
+import io.github.patternatlas.api.entities.PatternImplementation;
 import io.github.patternatlas.api.validator.PatternContentConstraint;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,4 +25,16 @@ public interface PatternService {
 
     @PostAuthorize(value = "hasResourcePermission(returnObject.id, @PC.APPROVED_PATTERN_READ)")
     Pattern getPatternByUri(String uri);
+
+    @PreAuthorize(value = "hasGlobalPermission(@PC.APPROVED_PATTERN_CREATE)")
+    PatternImplementation createPatternImplementation(@Valid PatternImplementation patternImplementation, UUID patternId);
+
+    @PreAuthorize(value = "hasGlobalPermission(@PC.APPROVED_PATTERN_CREATE)")
+    PatternImplementation updatePatternImplementation(@Valid PatternImplementation patternImplementation);
+
+    @PreAuthorize(value = "hasGlobalPermission(@PC.APPROVED_PATTERN_CREATE)")
+    PatternImplementation getPatternImplementationById(UUID implementationId);
+
+    @PreAuthorize(value = "hasGlobalPermission(@PC.APPROVED_PATTERN_CREATE)")
+    void deletePatternImplementationById(UUID implementationId);
 }

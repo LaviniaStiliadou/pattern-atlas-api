@@ -14,6 +14,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
+import io.github.patternatlas.api.entities.*;
+import io.github.patternatlas.api.rest.model.PatternImplementationModel;
 import org.apache.commons.text.CaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +38,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.github.patternatlas.api.entities.DirectedEdge;
-import io.github.patternatlas.api.entities.Pattern;
-import io.github.patternatlas.api.entities.PatternLanguage;
-import io.github.patternatlas.api.entities.PatternViewPattern;
-import io.github.patternatlas.api.entities.UndirectedEdge;
 import io.github.patternatlas.api.exception.DirectedEdgeNotFoundException;
 import io.github.patternatlas.api.exception.UndirectedEdgeNotFoundException;
 import io.github.patternatlas.api.rest.model.PatternContentModel;
@@ -381,11 +378,11 @@ public class PatternController {
 
     @Operation(operationId = "getPatternOfPatternLanguageById", responses = {@ApiResponse(responseCode = "200")}, description = "Retrieve single pattern by pattern language id")
     @GetMapping(value = "/patternLanguages/{patternLanguageId}/patterns/{patternId}")
-    EntityModel<Pattern> getPatternOfPatternLanguageById(@PathVariable UUID patternLanguageId, @PathVariable UUID patternId) {
+    EntityModel<PatternModel> getPatternOfPatternLanguageById(@PathVariable UUID patternLanguageId, @PathVariable UUID patternId) {
         Pattern pattern = this.patternLanguageService.getPatternOfPatternLanguageById(patternLanguageId, patternId);
         EdgeResult patternLinksForPatternLanguageRoute = getPatternLinksForPatternLanguageRoute(pattern, patternLanguageId);
         List<Link> patternLinks = getLinksForPattern(patternLinksForPatternLanguageRoute, patternLanguageId);
-        return new EntityModel<>(pattern, patternLinks);
+        return new EntityModel<>(PatternModel.from(pattern), patternLinks);
     }
 
     @Operation(operationId = "updatePatternByPatternLanguageId", responses = {@ApiResponse(responseCode = "200")}, description = "Update pattern by pattern language id")
@@ -405,6 +402,8 @@ public class PatternController {
         persistedVersion.setPaperRef(pattern.getPaperRef());
         persistedVersion.setContent(pattern.getContent());
         persistedVersion.setName(pattern.getName());
+        persistedVersion.setCategory(pattern.getCategory());
+        persistedVersion.setTags(pattern.getTags());
 
         pattern = this.patternService.updatePattern(persistedVersion);
         return new EntityModel<>(pattern,
@@ -458,5 +457,40 @@ public class PatternController {
                 linkTo(methodOn(PatternController.class).getPatternOfPatternLanguageById(patternLanguageId, patternId)).withRel("pattern"),
                 linkTo(methodOn(PatternController.class).getPatternRenderedContentOfPattern(patternLanguageId, patternId)).withRel("content"),
                 linkTo(methodOn(PatternLanguageController.class).getPatternLanguageById(patternLanguageId)).withRel("patternLanguage"));
+    }
+
+    @Operation(operationId = "addPatternImplementationToPattern", responses = {@ApiResponse(responseCode = "201")}, description = "add pattern implementation to pattern")
+    @PostMapping(value = "/patterns/{patternId}/pattern-implementation")
+    @CrossOrigin(exposedHeaders = "Location")
+    @ResponseStatus(HttpStatus.CREATED)
+    public EntityModel<PatternImplementationModel> addPatternImplementationToPattern(@PathVariable UUID patternId, @RequestBody PatternImplementation patternImplementation) {
+        PatternImplementation implementation = this.patternService.createPatternImplementation(patternImplementation, patternId);
+        return getPatternImplementationById(implementation.getId());
+    }
+
+    @Operation(operationId = "getPatternImplementationById", responses = {@ApiResponse(responseCode = "200")}, description = "Retrieve single pattern implementation by id")
+    @GetMapping(value = "/pattern-implementations/{id}")
+    EntityModel<PatternImplementationModel> getPatternImplementationById(@PathVariable UUID id) {
+        PatternImplementation implementation = this.patternService.getPatternImplementationById(id);
+        return new EntityModel<>(PatternImplementationModel.toModel(implementation));
+    }
+
+    @Operation(operationId = "deletePatternImplementation", responses = {@ApiResponse(responseCode = "204")}, description = "Delete pattern implementation")
+    @DeleteMapping(value = "/pattern-implementations/{id}")
+    ResponseEntity<?> deletePatternImplementation(@PathVariable UUID id) {
+        this.patternService.deletePatternImplementationById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(operationId = "updatePatternImplementation", responses = {@ApiResponse(responseCode = "200")}, description = "Update pattern implementation")
+    @PutMapping(value = "/pattern-implementations")
+    EntityModel<PatternImplementationModel> updatePatternImplementation(@Valid @RequestBody PatternImplementation implementation) {
+        PatternImplementation persistedImplementation = this.patternService.getPatternImplementationById(implementation.getId());
+
+        persistedImplementation.setType(implementation.getType());
+        persistedImplementation.setLink(implementation.getLink());
+
+        implementation = this.patternService.updatePatternImplementation(persistedImplementation);
+        return new EntityModel<>(PatternImplementationModel.toModel(implementation));
     }
 }

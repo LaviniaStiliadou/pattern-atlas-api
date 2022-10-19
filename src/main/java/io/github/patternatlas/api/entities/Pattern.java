@@ -46,4 +46,11 @@ public class Pattern extends EntityWithURI {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private Object renderedContent;
+
+    @OneToMany(mappedBy = "pattern", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PatternImplementation> patternImplementations = new ArrayList<>();
+
+    private String category;
+
+    private String tags;
 }
