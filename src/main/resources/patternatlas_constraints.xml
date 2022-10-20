@@ -377,4 +377,10 @@
     <changeSet author="alex (generated)" id="1646839031337-124">
         <addForeignKeyConstraint baseColumnNames="design_model_id" baseTableName="design_model_pattern_edge" constraintName="fktmrf8lhrt4fpnh9jwdlpk1iae" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="design_model" validate="true"/>
     </changeSet>
+    <changeSet author="alex (generated)" id="1646839031337-125">
+        <addPrimaryKey columnNames="id" constraintName="pattern_implementation_pkey" tableName="pattern_implementation"/>
+    </changeSet>
+    <changeSet author="alex (generated)" id="1646839031337-126">
+        <addForeignKeyConstraint baseColumnNames="pattern_id" baseTableName="pattern_implementation" constraintName="pattern_id_foreign" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="id" referencedTableName="pattern" validate="true"/>
+    </changeSet>
 </databaseChangeLog>

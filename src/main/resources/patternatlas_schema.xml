@@ -82,6 +82,8 @@
             <column name="rendered_content" type="JSONB"/>
             <column name="pattern_language_id" type="UUID"/>
             <column name="paper_ref" type="VARCHAR(255)"/>
+            <column name="category" type="VARCHAR(255)"/>
+            <column name="tags" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
     <changeSet author="alex (generated)" id="1646838986180-6">
@@ -564,6 +566,16 @@
             <column name="roles_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="alex (generated)" id="1646838986180-46">
+        <createTable tableName="pattern_implementation">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="link" type="VARCHAR(255)"/>
+            <column name="pattern_id" type="UUID"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>
