@@ -52,4 +52,6 @@ public class Pattern extends EntityWithURI {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean deploymentModelingBehaviorPattern;
+
+    private String tags;
 }

@@ -29,6 +29,8 @@ public class PatternModel {
     private Boolean deploymentModelingBehaviorPattern;
     private Boolean deploymentModelingStructurePattern;
 
+    protected String tags;
+
     @JsonIgnore
     protected Pattern pattern;
 
@@ -43,6 +45,7 @@ public class PatternModel {
         this.patternLanguageName = patternLanguage.getName();
         this.deploymentModelingBehaviorPattern = pattern.getDeploymentModelingBehaviorPattern();
         this.deploymentModelingStructurePattern = pattern.getDeploymentModelingStructurePattern();
+        this.tags = pattern.getTags();
     }
 
     public static PatternModel from(Pattern pattern) {
